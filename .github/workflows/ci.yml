@@ -1,0 +1,68 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux release
+            os: ubuntu-latest
+            build_type: Release
+            sanitizers: "OFF"
+            static_lex: "ON"
+            stats: "ON"
+          - name: macOS release
+            os: macos-latest
+            build_type: Release
+            sanitizers: "OFF"
+            static_lex: "ON"
+            stats: "ON"
+          - name: Windows release
+            os: windows-latest
+            build_type: Release
+            sanitizers: "OFF"
+            static_lex: "ON"
+            stats: "ON"
+          - name: Linux debug with sanitizers
+            os: ubuntu-latest
+            build_type: Debug
+            sanitizers: "ON"
+            static_lex: "ON"
+            stats: "ON"
+          - name: Linux calculated lookup without statistics
+            os: ubuntu-latest
+            build_type: Release
+            sanitizers: "OFF"
+            static_lex: "OFF"
+            stats: "OFF"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Configure
+        run: >-
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DBUILD_TESTING=ON
+          -DAPPSTS_SANITIZERS=${{ matrix.sanitizers }}
+          -DAPPSTS_STATIC_LEX=${{ matrix.static_lex }}
+          -DAPPSTS_STATS=${{ matrix.stats }}
+      - name: Build
+        run: cmake --build build --config ${{ matrix.build_type }} --parallel
+      - name: Test
+        run: ctest --test-dir build -C ${{ matrix.build_type }} --output-on-failure

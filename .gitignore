@@ -1,0 +1,47 @@
+# Out-of-source CMake builds (including CLion and common IDE defaults).
+/build*/
+/cmake-build*/
+/out/
+/CMakeUserPresets.json
+
+# Generated files from accidental in-source CMake builds.
+/CMakeCache.txt
+/CMakeFiles/
+/Testing/
+/CTestTestfile.cmake
+/DartConfiguration.tcl
+/cmake_install.cmake
+/install_manifest*.txt
+/compile_commands.json
+/Makefile
+
+# Compiled objects, libraries, executables and debug symbols.
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.dSYM/
+/antipasch_psts
+/test_helpers
+
+# Local IDE settings, editor backups and OS metadata.
+/.idea/
+/.vscode/
+/.vs/
+*.user
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Python test caches.
+__pycache__/
+*.py[cod]
+.pytest_cache/
